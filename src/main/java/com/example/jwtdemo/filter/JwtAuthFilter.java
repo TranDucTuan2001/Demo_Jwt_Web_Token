@@ -48,12 +48,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
 
             if (jwtService.validateToken(token, userDetails)) {
-                // Lấy vai trò từ token
                 String role = jwtService.extractRole(token);
                 List<GrantedAuthority> authorities = new ArrayList<>();
-                authorities.add(new SimpleGrantedAuthority("ROLE_" + role)); // Ánh xạ vai trò vào quyền hạn
+                authorities.add(new SimpleGrantedAuthority(role)); // Bỏ việc thêm "ROLE_"
 
-                // Tạo authentication token và thêm vào SecurityContext
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, authorities);
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
